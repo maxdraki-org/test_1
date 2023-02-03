@@ -1,7 +1,14 @@
-name: Test
-description: Test
+name: Calculating Energy Savings
+description: Calculating Energy Savings
 itemType: insight
 tags:
   - example
-creation: {}
-metadata: {}
+  - energy-savings
+creation:
+  template: null
+  __typename: InsightCreation
+  clonedFrom: null
+metadata:
+  team: null
+  __typename: InsightMetadata
+  publishedDate: null
