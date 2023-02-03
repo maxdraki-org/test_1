@@ -2,6 +2,8 @@
 
 Welcome to our second post on inference and energy savings. [In our first post](https://tech.ovoenergy.com/inference-in-observational-studies/) you were introduced to the concept of inference, matching and pesky confounding variables - if you haven’t read our first post I would recommend you take a look. In this post we will go into detail about how we used a matching method called Coarsened Exact Matching (CEM) and an inference model to help determine if our energy saving insights were indeed helping customers save energy (spoilers: they do!).
 
+### Superfluous code section to show capability
+
 ```sql
 SELECT `Custom_SQL_Query`.`Accounts` AS `Accounts`,
   `Custom_SQL_Query`.`COT_or_COS` AS `COT_or_COS`,
@@ -48,6 +50,48 @@ As discussed in the previous post, when assessing the impact of a product or fea
 For example if we were interested in testing whether smoking increases the risk of lung cancer, we wouldn’t separate people into a control and treatment group and ask those in the control to never smoke and ask those in the treatment to smoke a pack a day! This is where observational studies can help - when the intervention is out of the researchers control. Anyway, I won’t go into any more detail here as the first post does a great job at explaining.
 
 Needless to say, this is where we found ourselves: with a set of pages with energy saving tips and actions, available to everyone at OVO. We had a binary intervention variable (some people viewed the pages and others did not), and wanted to understand if the intervention (the first viewing of our pages) was indeed helping people save energy.
+
+## Superfluous section on charts
+
+:::vega
+{
+  "data": {
+    "values": [
+      {"a": "A", "b": 28}, {"a": "B", "b": 55}, {"a": "C", "b": 43},
+      {"a": "D", "b": 91}, {"a": "E", "b": 81}, {"a": "F", "b": 53},
+      {"a": "G", "b": 19}, {"a": "H", "b": 87}, {"a": "I", "b": 52}
+    ]
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "a", "type": "nominal", "axis": {"labelAngle": 0}},
+    "y": {"field": "b", "type": "quantitative"}
+  }
+
+}
+:::
+
+:::xkcd[line]
+{
+  title: 'Monthly income of an indie developer',
+  xLabel: 'Month',
+  yLabel: '$ Dollars',
+  data: {
+    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    datasets: [{
+      label: 'Plan',
+      data: [30, 70, 200, 600, 500, 800, 1500, 2900, 5000, 8000]
+    }, {
+      label: 'Reality',
+      data: [0, 1, 30, 70, 80, 100, 50, 80, 40, 150]
+    }]
+  },
+  options: {
+    yTickCount: 3,
+    legendPosition: 2
+  }
+}
+:::
 
 ## Method to the madness
 
