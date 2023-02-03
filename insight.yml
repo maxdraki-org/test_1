@@ -1,0 +1,7 @@
+name: Test
+description: Test
+itemType: insight
+tags:
+  - example
+creation: {}
+metadata: {}
