@@ -1,5 +1,38 @@
 Welcome to our second post on inference and energy savings. [In our first post](https://tech.ovoenergy.com/inference-in-observational-studies/) you were introduced to the concept of inference, matching and pesky confounding variables - if you haven’t read our first post I would recommend you take a look. In this post we will go into detail about how we used a matching method called Coarsened Exact Matching (CEM) and an inference model to help determine if our energy saving insights were indeed helping customers save energy (spoilers: they do!).
 
+```sql
+SELECT `Custom_SQL_Query`.`Accounts` AS `Accounts`,
+  `Custom_SQL_Query`.`COT_or_COS` AS `COT_or_COS`,
+  `Custom_SQL_Query`.`Category` AS `Category`,
+  `Custom_SQL_Query`.`Debt` AS `Debt`,
+  `Custom_SQL_Query`.`Debt_Survival_Rate_12M` AS `Debt_Survival_Rate_12M`,
+  `Custom_SQL_Query`.`Ledger_Segment` AS `Ledger_Segment`,
+  `Custom_SQL_Query`.`Meter_Type` AS `Meter_Type`,
+  `Custom_SQL_Query`.`Oldest_Debt_Category` AS `Oldest_Debt_Category`,
+  `Custom_SQL_Query`.`Provision_12M` AS `Provision_12M`,
+  `Custom_SQL_Query`.`Snapshot_Date` AS `Snapshot_Date`
+FROM (
+  SELECT  
+  P.Snapshot_Date,
+  TRIM(Ledger_Segment) as Ledger_Segment, 
+  Oldest_Debt_Category, 
+  CASE WHEN TRIM(Ledger_Segment) in ('Non-Performing DD','Performing DD') THEN 'Direct Debit'
+       WHEN TRIM(Ledger_Segment) in ('Pay on Demand performing','Pay on Demand non-performing','Payment Plan','VOID/Occupier') THEN 'Pay on Demand'
+       WHEN TRIM(Ledger_Segment) in ('Final VOID/Occupier','Final Pay on Demand','Final DD') THEN 'Final'
+       ELSE 'PAYG'END AS Category,
+  SUM(Debt) AS Debt, 
+  Debt_Survival_Rate_12M, 
+  SUM(Provision_12M) AS Provision_12M,
+  CASE WHEN AH.Meter_Type_Category = 'Dumb' THEN 'Trad' WHEN AH.Meter_Type_Category = 'Smart and Dumb' then 'Both' 
+       WHEN AH.Meter_Type_Category is null THEN 'Unknown' else AH.Meter_Type_Category END as Meter_Type,
+  CASE WHEN AH.Switch_Type = 'S' THEN 'COS' WHEN AH.Switch_Type = 'M' THEN 'COT' ELSE 'Unknown' END as COT_or_COS,
+  COUNT(*) AS Accounts
+  FROM `data-science-retail.bad_debt_provision.Provision_By_Account` P
+  left join `ovo-dwh-prod.crm.account_history` as AH on AH.Account_No = P.Account_No and AH.Snapshot_Date = P.Snapshot_Date and AH.Snapshot_Date>= '2020-07-31'
+  GROUP BY 1,2,3,4,6,8,9
+) `Custom_SQL_Query`
+```
+
 ## Why all the Hassle?!
 
 So let me set the scene… My team works on a section of the website called OVO Greenlight. The aim of Greenlight is to be a one stop shop for anything carbon reduction (mainly surrounding your energy usage) and as such the page contains details about a customer's energy carbon footprint as well as tips, tricks and actions to reduce the footprint. If you are an OVO customer then go take a look! It’s pretty sweet stuff - if we do say so ourselves!
@@ -28,7 +61,7 @@ Customers who viewed the Greenlight pages (labelled “actuals” in this post) 
 
 
 
-:::table{caption="Variables used in matching" colorScheme=blue variant=striped}
+:::table{caption="Variables used in matching" colorScheme=blue size=lg variant=striped}
 | City        | County | 
 | ----------- | ------ | 
 | Length of time at Ovo       | Tariff Type  |
