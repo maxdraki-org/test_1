@@ -1,3 +1,5 @@
+# Calculating Energy Savings
+
 Welcome to our second post on inference and energy savings. [In our first post](https://tech.ovoenergy.com/inference-in-observational-studies/) you were introduced to the concept of inference, matching and pesky confounding variables - if you haven’t read our first post I would recommend you take a look. In this post we will go into detail about how we used a matching method called Coarsened Exact Matching (CEM) and an inference model to help determine if our energy saving insights were indeed helping customers save energy (spoilers: they do!).
 
 ```sql
